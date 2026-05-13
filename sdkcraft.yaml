@@ -1,0 +1,39 @@
+name: skills
+title: Skills
+adopt-info: skills
+summary: The open agent skills tool - npx skills
+description: |
+  A tool to install agent skills
+license: LGPL-2.1
+build-base: ubuntu@26.04
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [amd64]
+    build-for: [arm64]
+  riscv64:
+    build-on: [amd64]
+    build-for: [riscv64]
+
+parts:
+  skills:
+    plugin: npm
+    source: .
+    npm-include-node: true
+    npm-node-version: 22.22.1
+    build-packages:
+      - node-husky
+    override-pull: |
+      VERSION=$(cat "$CRAFT_PROJECT_DIR/VERSION")
+      craftctl set version="$VERSION"
+      TARPATH="skills-${VERSION}.tgz"
+      curl -fLO "https://registry.npmjs.org/skills/-/${TARPATH}"
+      tar -xzf "${TARPATH}" --strip-components=1 -C "$CRAFT_PART_SRC"
+      rm "${TARPATH}"
+
+plugs:
+  skills:
+    interface: mount
+    workshop-target: /home/workshop/.agents/skills

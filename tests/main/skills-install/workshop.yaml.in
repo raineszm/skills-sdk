@@ -1,0 +1,4 @@
+name: test-skills-install
+base: ${BASE}
+sdks:
+  - name: try-skills

@@ -1,0 +1,4 @@
+name: test-skills-find
+base: ${BASE}
+sdks:
+  - name: try-skills

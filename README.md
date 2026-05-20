@@ -1,7 +1,7 @@
 # Skills SDK for Workshop
 
 This SDK installs the [`skills`](https://www.npmjs.com/package/skills) npm
-package into your workshop, providing the `npx skills` CLI for finding and
+package into your workshop, providing the `skills` CLI for finding and
 installing agent skills.
 
 ---

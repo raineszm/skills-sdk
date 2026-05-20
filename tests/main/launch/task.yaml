@@ -1,4 +1,4 @@
-summary: Launch workshop with sdk-agent-skills SDK
+summary: Launch workshop with skills-sdk SDK
 
 prepare: |
   envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
@@ -8,7 +8,9 @@ restore: |
   workshop remove || true
 
 execute: |
-  # workshop exec -- sdk-agent-skills --version
+  # Verify the skills CLI is available in the workshop
+  workshop exec -- which skills
+  workshop exec -- skills --version
 
 debug: |
   workshop tasks

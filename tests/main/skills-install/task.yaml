@@ -1,0 +1,35 @@
+summary: Install a skill globally and verify it persists in the mount directory
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  SKILL_NAME="web-design-guidelines"
+  SKILL_SOURCE="vercel-labs/agent-skills"
+  MOUNT_TARGET="/home/workshop/.agents/skills"
+
+  # Install a skill globally into the workshop
+  workshop exec -- skills add "${SKILL_SOURCE}" -g -y -s "${SKILL_NAME}"
+
+  # Skill must appear in the global skills listing
+  workshop exec -- skills ls -g --json | MATCH "\"${SKILL_NAME}\""
+
+  # Skill directory must exist at the mount target inside the workshop
+  workshop exec -- test -d "${MOUNT_TARGET}/${SKILL_NAME}"
+
+  # Skill must contain a SKILL.md file (standard skill structure)
+  workshop exec -- test -f "${MOUNT_TARGET}/${SKILL_NAME}/SKILL.md"
+
+  # Verify persistence: stop and restart the workshop, skill must survive
+  workshop stop
+  workshop start
+
+  workshop exec -- test -d "${MOUNT_TARGET}/${SKILL_NAME}"
+  workshop exec -- test -f "${MOUNT_TARGET}/${SKILL_NAME}/SKILL.md"
+
+debug: |
+  workshop tasks

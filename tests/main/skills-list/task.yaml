@@ -1,0 +1,15 @@
+summary: List globally installed skills with the skills CLI
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # skills ls -g should succeed and output valid JSON array
+  workshop exec -- skills ls -g --json | MATCH '^\['
+
+debug: |
+  workshop tasks

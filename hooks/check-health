@@ -1,0 +1,12 @@
+# check skills is installed and available
+if [[ ! -f "${SDK}/bin/skills" ]]; then
+  workshopctl set-health --code="skills-not-installed" error "skills not installed."
+  exit 0
+fi
+
+if ! sudo -u workshop --login which skills >/dev/null 2>&1; then
+  workshopctl set-health --code="skills-not-on-path" error "skills not on \$PATH."
+  exit 0
+fi
+
+workshopctl set-health okay

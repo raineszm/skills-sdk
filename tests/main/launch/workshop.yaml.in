@@ -1,4 +1,4 @@
-name: test-sdk-agent-skills
+name: test-skills
 base: ${BASE}
 sdks:
-  - name: try-sdk-agent-skills
+  - name: try-skills

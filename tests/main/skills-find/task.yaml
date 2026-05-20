@@ -1,0 +1,18 @@
+summary: Find available skills in a remote repository without installing
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # skills add --list should display available skills without installing anything
+  workshop exec -- skills add --list vercel-labs/agent-skills | MATCH '[a-z]'
+
+  # No skills should be installed after a --list-only query
+  workshop exec -- skills ls -g --json | NOMATCH 'react-best-practices'
+
+debug: |
+  workshop tasks

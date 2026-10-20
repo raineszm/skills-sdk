@@ -37,13 +37,19 @@ Inside the workshop, use the `skills` CLI to find and install skills.
 
 ```bash
 # List globally installed skills
-skills list --global
+skills ls -g
 
-# Install a skill
-skills install <skill-name>
+# Search for skills published on skills.sh
+skills find react
 
-# Search for skills
-skills search <query>
+# List the skills available in a repository without installing them
+skills add --list vercel-labs/agent-skills
+
+# Install one skill from that repository, globally
+skills add vercel-labs/agent-skills -g -s web-design-guidelines
+
+# Update the globally installed skills
+skills update -g
 ```
 
 Installed skills are stored in `/home/workshop/.agents/skills/` inside the

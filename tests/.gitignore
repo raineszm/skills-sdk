@@ -1,1 +1,6 @@
 workshop_*
+
+# spread state: system reuse cache (holds backend credentials) and the
+# transient try area sdkcraft copies packed SDKs into
+.spread-reuse.yaml
+.craft-*/

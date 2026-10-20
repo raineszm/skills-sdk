@@ -10,7 +10,10 @@ restore: |
 execute: |
   # Verify the skills CLI is available in the workshop
   workshop exec -- which skills
-  workshop exec -- skills --version
+
+  # The packaged CLI must be the version pinned in VERSION
+  VERSION_REGEX="$(echo "${EXPECTED_VERSION}" | sed 's/\./\\./g')"
+  workshop exec -- skills --version | MATCH "^${VERSION_REGEX}$"
 
 debug: |
   workshop tasks

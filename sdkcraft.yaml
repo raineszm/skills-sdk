@@ -1,9 +1,10 @@
 name: skills
 title: Skills
 adopt-info: skills
-summary: The open agent skills tool - npx skills
+summary: The open agent skills ecosystem - find and install agent skills
 description: |
-  A tool to install agent skills
+  The open agent skills ecosystem. Provides the skills CLI for finding and
+  installing agent skills.
 license: LGPL-2.1
 build-base: ubuntu@26.04
 platforms:

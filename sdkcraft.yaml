@@ -25,11 +25,16 @@ parts:
     npm-include-node: true
     npm-node-version: 22.22.1
     build-packages:
+      - git
       - node-husky
     override-pull: |
-      VERSION=$(cat "$CRAFT_PROJECT_DIR/VERSION")
-      craftctl set version="$VERSION"
-      TARPATH="skills-${VERSION}.tgz"
+      UPSTREAM=$(cat "$CRAFT_PROJECT_DIR/VERSION")
+      if ! HASH=$(git -C "$CRAFT_PROJECT_DIR" rev-parse --short HEAD 2>/dev/null); then
+        echo "error: cannot read the git commit from $CRAFT_PROJECT_DIR" >&2
+        exit 1
+      fi
+      craftctl set version="${UPSTREAM}-${HASH}"
+      TARPATH="skills-${UPSTREAM}.tgz"
       curl -fLO "https://registry.npmjs.org/skills/-/${TARPATH}"
       tar -xzf "${TARPATH}" --strip-components=1 -C "$CRAFT_PART_SRC"
       rm "${TARPATH}"

@@ -1,0 +1,38 @@
+summary: Global skills state (skills and lock file) survives a refresh
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  SKILL_NAME="web-design-guidelines"
+  SKILL_SOURCE="vercel-labs/agent-skills"
+  MOUNT_TARGET="/home/workshop/.agents/skills"
+  LOCK_FILE="${MOUNT_TARGET}/.skill-lock.json"
+
+  # Install a skill globally; the CLI must write its lock file on the mount
+  workshop exec -- skills add "${SKILL_SOURCE}" -g -y -s "${SKILL_NAME}"
+  workshop exec -- test -f "${LOCK_FILE}"
+
+  # `workshop refresh` is a no-op when the definition hasn't changed, so it
+  # never discards the writable layer here. Assert the mount directly: only
+  # state on the mount outlives a refresh.
+  workshop exec -- stat -c %m "${LOCK_FILE}" | MATCH '^/home/workshop/[.]agents/skills$'
+  workshop exec -- stat -c %m "${MOUNT_TARGET}/${SKILL_NAME}" | MATCH '^/home/workshop/[.]agents/skills$'
+
+  # A refresh leaves both in place
+  workshop refresh
+
+  workshop exec -- test -d "${MOUNT_TARGET}/${SKILL_NAME}"
+  workshop exec -- test -f "${LOCK_FILE}"
+
+  # If the lock file survived, the skill still lists as tracked (a lost lock
+  # lists installed skills as untracked, without source information)
+  workshop exec -- skills ls -g --json | MATCH "\"${SKILL_NAME}\""
+  workshop exec -- skills ls -g --json | MATCH '"status": "tracked"'
+
+debug: |
+  workshop tasks

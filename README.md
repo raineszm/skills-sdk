@@ -53,7 +53,15 @@ skills update -g
 ```
 
 Installed skills are stored in `/home/workshop/.agents/skills/` inside the
-workshop.
+workshop. The CLI also keeps a global lock file,
+`/home/workshop/.agents/skills/.skill-lock.json`, which records where each
+skill came from and what `skills update -g` compares against. Both live on
+the `skills` mount, so they survive `workshop refresh`.
+
+The CLI resolves that lock under `$XDG_STATE_HOME/skills/`. This SDK puts a
+`skills` shim on `PATH` that sets `XDG_STATE_HOME=/home/workshop/.agents`,
+which places the lock beside the skills without moving the state directory
+for any other tool. A value you set yourself is left alone.
 
 ---
 
@@ -63,10 +71,13 @@ workshop.
 
 - Interface: `mount`
 - Workshop target: `/home/workshop/.agents/skills`
-- Purpose: Preserves the skills you have installed on your local system.
-  You can also use `workshop remount` to control its contents on the host.
-  To mount your existing `~/.agents/skills/` into the workshop, stop
-  the workshop first, remount, then start it again:
+- Purpose: Preserves the skills you have installed on your local system,
+  together with the CLI's global lock file (`~/.agents/skills/.skill-lock.json`)
+  that tracks their sources and update state. Keeping both on one mount
+  means `skills ls -g` and `skills update -g` stay consistent across
+  `workshop refresh`. You can also use `workshop remount` to control its
+  contents on the host. To mount your existing `~/.agents/skills/` into the
+  workshop, stop the workshop first, remount, then start it again:
 
   ```bash
   workshop stop <workshop-name>

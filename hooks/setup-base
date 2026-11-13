@@ -1,3 +1,17 @@
+# The skills CLI keeps its global lock file under
+# $XDG_STATE_HOME/skills/.skill-lock.json. Point XDG_STATE_HOME at ~/.agents
+# from a shim so the lock resolves to ~/.agents/skills/.skill-lock.json,
+# alongside the installed skills on the `skills` mount. A shim rather than a
+# global export keeps every other tool on the default state directory.
+install -d -m 0755 /usr/local/libexec/skills-shim
+cat <<EOF >/usr/local/libexec/skills-shim/skills
+#!/bin/sh
+: "\${XDG_STATE_HOME:=/home/workshop/.agents}"
+export XDG_STATE_HOME
+exec "${SDK}/bin/skills" "\$@"
+EOF
+chmod 0755 /usr/local/libexec/skills-shim/skills
+
 cat <<EOF >/etc/profile.d/skills.sh
-export PATH="${SDK}/bin:\$PATH"
+export PATH="/usr/local/libexec/skills-shim:${SDK}/bin:\$PATH"
 EOF
